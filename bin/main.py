@@ -64,7 +64,7 @@ def transform(documents, valid_chars):
 
     Prepare data for word2vec and create the embeddings for the documents
     :param documents: all text from shakespeare
-    :param valid_chars: all all characters that we can cluster together
+    :param valid_chars: all characters that we can cluster together
     :return: word2vec model, embedding matrix
     """
     logging.info('Begin transform')
@@ -88,12 +88,12 @@ def transform(documents, valid_chars):
     return w2v_model, embedding_matrix
 
 def cluster(embedding_matrix, valid_chars):
-
     """
 
-    :param embedding_matrix:
-    :param valid_chars:
-    :return:
+    Clusters characters together based on their embedding vectors
+    :param embedding_matrix: w2v embeddings for selected characters
+    :param valid_chars: all characters that we can cluster together
+    :return: clusters of characters that represent archetypes
     """
     logging.info('Begin clustering')
 
