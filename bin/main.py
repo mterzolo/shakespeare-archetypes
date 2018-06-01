@@ -1,3 +1,14 @@
+import gensim
+import pandas as pd
+import string
+import logging
+import os
+import pickle
+from sklearn.cluster import KMeans
+
+import lib
+
+
 def main():
     """
     Main function documentation template
@@ -12,6 +23,7 @@ def main():
     load(embedding_matrix, w2v_model, archetypes)
     pass
 
+
 def extract():
     """
     Extract necessary data / resources from upstream. This method will:
@@ -19,7 +31,7 @@ def extract():
      - cursory cleaning and concatenation
      - Validate which characters we will group together
     :return: documents, valid_chars
-    :rtype: (numpy.array, numpy.array)
+    :rtype: (list, list)
     """
 
     logging.info('Begin extract')
@@ -87,6 +99,7 @@ def transform(documents, valid_chars):
 
     return w2v_model, embedding_matrix
 
+
 def cluster(embedding_matrix, valid_chars):
     """
 
@@ -106,6 +119,26 @@ def cluster(embedding_matrix, valid_chars):
                                'cluster': labels}).sort_values('cluster')
 
     return archetypes
+
+
+def load(documents, valid_chars, w2v_model, archetypes):
+
+    logging.info('Begin load')
+
+    logging.info('Writing documents to file')
+    pickle.dump(documents, open(os.path.join(lib.get_batch_output_folder(), 'documents.pkl'), 'w+'))
+
+    logging.info('Writing valid_chars to file')
+    pickle.dump(valid_chars, open(os.path.join(lib.get_batch_output_folder(), 'valid_chars.pkl'), 'w+'))
+
+    logging.info('Writing w2v_model to file')
+    pickle.dump(w2v_model, open(os.path.join(lib.get_batch_output_folder(), 'w2v_model.pkl'), 'w+'))
+
+    logging.info('Writing archetypes observations to txt file ')
+    archetypes.to_csv(os.path.join(lib.get_batch_output_folder(), 'archetypes.csv'))
+    logging.info('End load')
+    pass
+
 
 # Main section
 if __name__ == '__main__':
