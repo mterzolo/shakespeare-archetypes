@@ -1,9 +1,10 @@
 import gensim
-import pandas as pd
 import string
 import logging
 import os
 import pickle
+import pandas as pd
+from random import shuffle
 from sklearn.cluster import KMeans
 
 import lib
@@ -20,7 +21,7 @@ def main():
     documents, valid_chars = extract()
     w2v_model, embedding_matrix = transform(documents, valid_chars)
     archetypes = cluster(embedding_matrix, valid_chars)
-    load(embedding_matrix, w2v_model, archetypes)
+    load(documents, embedding_matrix, w2v_model, archetypes)
     pass
 
 
@@ -85,6 +86,9 @@ def transform(documents, valid_chars):
     translator = str.maketrans('', '', string.punctuation)
     documents = [i.translate(translator) for i in documents]
 
+    # Shuffle to break up play and sonnet lines
+    shuffle(documents)
+
     # Remove stopwords
     stoplist = set('for a of the and to in'.split())
     texts = [[word for word in document.lower().split() if word not in stoplist] for document in documents]
@@ -126,13 +130,13 @@ def load(documents, valid_chars, w2v_model, archetypes):
     logging.info('Begin load')
 
     logging.info('Writing documents to file')
-    pickle.dump(documents, open(os.path.join(lib.get_batch_output_folder(), 'documents.pkl'), 'w+'))
+    pickle.dump(documents, open(os.path.join(lib.get_batch_output_folder() + '/documents.pkl'), 'wb'))
 
     logging.info('Writing valid_chars to file')
-    pickle.dump(valid_chars, open(os.path.join(lib.get_batch_output_folder(), 'valid_chars.pkl'), 'w+'))
+    pickle.dump(valid_chars, open(os.path.join(lib.get_batch_output_folder() + '/valid_chars.pkl'), 'wb'))
 
     logging.info('Writing w2v_model to file')
-    pickle.dump(w2v_model, open(os.path.join(lib.get_batch_output_folder(), 'w2v_model.pkl'), 'w+'))
+    pickle.dump(w2v_model, open(os.path.join(lib.get_batch_output_folder() + '/w2v_model.pkl'), 'wb'))
 
     logging.info('Writing archetypes observations to txt file ')
     archetypes.to_csv(os.path.join(lib.get_batch_output_folder(), 'archetypes.csv'))
