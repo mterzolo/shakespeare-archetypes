@@ -1,5 +1,7 @@
-# shakespeare-archetypes
+# Shakespeare Archetypes
 Understanding Shakespeare's characters using NLP
+
+The goal of this project is to take Shakespeare's body of work and see if we can find any connections between the characters he created. By creating word embeddings from the corpus, we can see which characters names show up in similar contexts. This give us a rich view into the characters and allows us to create features of each character without going through and manually labelling each character.
 
 Links to data:
 
