@@ -8,8 +8,8 @@ def main():
 
     documents, valid_chars = extract()
     w2v_model, embedding_matrix = transform(documents, valid_chars)
-    embeddings = model(w2v_model, embedding_matrix, valid_chars)
-    load(embeddings, documents)
+    archetypes = cluster(embedding_matrix, valid_chars)
+    load(embedding_matrix, w2v_model, archetypes)
     pass
 
 def extract():
@@ -64,7 +64,8 @@ def transform(documents, valid_chars):
 
     Prepare data for word2vec and create the embeddings for the documents
     :param documents: all text from shakespeare
-    :return: word2vec model, embedding matrix for selected characters
+    :param valid_chars: all all characters that we can cluster together
+    :return: word2vec model, embedding matrix
     """
     logging.info('Begin transform')
 
@@ -86,6 +87,25 @@ def transform(documents, valid_chars):
 
     return w2v_model, embedding_matrix
 
+def cluster(embedding_matrix, valid_chars):
+
+    """
+
+    :param embedding_matrix:
+    :param valid_chars:
+    :return:
+    """
+    logging.info('Begin clustering')
+
+    # Predict cluster labels
+    kmeans_model = KMeans(n_clusters=6).fit(embedding_matrix)
+    labels = kmeans_model.predict(embedding_matrix)
+
+    # Save to dataframe
+    archetypes = pd.DataFrame({'Name': valid_chars,
+                               'cluster': labels}).sort_values('cluster')
+
+    return archetypes
 
 # Main section
 if __name__ == '__main__':
